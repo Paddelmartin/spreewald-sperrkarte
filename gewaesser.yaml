@@ -1,0 +1,110 @@
+# Zuordnung: Eintrag auf der LBV-Seite  ->  Geometrie auf der OSM-Karte
+#
+# Ein Eintrag passt auf eine Regel, wenn 'match' im Feld "Gewässer" enthalten ist UND
+# 'bereich' (optional) im Feld "Bereich". Die ERSTE passende Regel gewinnt.
+# 'manual' (von Hand eingetragene Koordinaten, Breite dann Länge) hat Vorrang vor der OSM-Suche.
+#   - point: [Breite, Länge]  + radius_m  -> Kreis um eine Stelle
+#   - line:  [[Breite, Länge], ...]        -> Linie entlang eines Abschnitts
+# genau: false  -> im Popup steht "Abschnitt nur ungefähr eingezeichnet"
+
+regeln:
+  # ---------- von Hand eingetragen ----------
+  - match: "zeitzfließ"                        # Zeitzschleuse, Wehr 107
+    manual:
+      - point: [51.870281, 13.995952]
+        radius_m: 200
+
+  - match: "stilles fließ"                     # Kanu-Fischpass, Wehr 31
+    manual:
+      - point: [51.860809, 14.090642]
+        radius_m: 150
+
+  - match: "großes fließ"                      # zweite Brücke unterhalb Wehr 116
+    manual:
+      - point: [51.899654, 13.972979]
+        radius_m: 150
+
+  - match: "obere ragower kahnfahrt"           # Bahnlinie Cottbus-Berlin bis Einmündung
+    genau: false
+    manual:
+      - line: [[51.890744, 13.91200451], [51.899211, 13.932021]]
+
+  - match: "mittelkanal"                       # Weidengraben bis Burg-Lübbener-Kanal
+    genau: false
+    manual:
+      - line: [[51.868441, 14.084899], [51.867475, 14.089899]]
+
+  - match: "nordfließ"                         # Schleuse Kannomühle, Wehr 52
+    manual:
+      - point: [51.893568, 14.055556]
+        radius_m: 200
+
+  - match: "neu lübbenauer kahnfahrt"          # Schleuse Neu Lübbenau
+    manual:
+      - point: [52.075680, 13.885826]
+        radius_m: 200
+
+  - match: "burg-lübbener-kanal"               # Kalkofenschleuse, Wehr 119
+    manual:
+      - point: [51.886174, 13.968035]
+        radius_m: 200
+
+  # ---------- Spree: nur punktuell. REIHENFOLGE beachten: spezifische Regeln zuerst ----------
+  - match: "spree"                             # rechtes Brückenjoch, Eisenbahnbrücke Hartmannsdorf
+    bereich: "Brückenjoch"
+    manual:
+      - point: [51.968043, 13.895313]
+        radius_m: 150
+
+  - match: "spree"                             # Schleuse Schlepziger Mühle
+    bereich: "Schlepziger Mühle"
+    manual:
+      - point: [52.028962, 13.889894]
+        radius_m: 250
+
+  - match: "spree"                             # Jedroschleuse, Wehr 27 (Abschnitt bis Kreisgrenze)
+    bereich: "Jedroschleuse"
+    genau: false
+    manual:
+      - point: [51.839613, 14.096054]
+        radius_m: 300
+
+  - match: "spree"                             # Schleuse Hartmannsdorf (ab 19.10.2026)
+    bereich: "Hartmannsdorf"
+    manual:
+      - point: [51.991135, 13.883468]
+        radius_m: 250
+
+  - match: "spree"                             # Conradsbrücke, Burg: noch KEINE eigene Koordinate
+    bereich: "Conradsbrücke"
+    near: "Conrad"
+    radius_m: 250
+
+  # ---------- automatisch aus OpenStreetMap (Zwischenspeicher geo_cache.json) ----------
+  - match: "wolschina"
+    ways: ["Wolschina"]
+
+  - match: "wotschofskagraben"
+    ways: ["Wotschofskagraben", "Kumrodna"]
+
+  - match: "dritter freiheitskanal"
+    ways: ["Dritter Freiheitskanal", "III. Freiheitskanal"]
+
+  - match: "erster freiheitskanal"
+    ways: ["Erster Freiheitskanal", "I. Freiheitskanal"]
+    genau: false          # gesperrt sind nur Teilabschnitte
+
+  - match: "dresslerstrom"
+    ways: ["Dresslerstrom"]
+
+  - match: "lehder graben"
+    ways: ["Lehder Graben"]
+    near: "Stufenbr.cke|Spreewaldhafen"
+    radius_m: 700
+    genau: false
+
+  - match: "südumfluter"
+    ways: ["Südumfluter"]
+    near: "Friedhofswehr"
+    radius_m: 2500
+    genau: false
