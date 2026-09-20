@@ -96,8 +96,10 @@ regeln:
   - match: "wolschina"
     ways: ["Wolschina"]
 
-  - match: "wotschofskagraben"
-    ways: ["Wotschofskagraben", "Kumrodna"]
+  - match: "wotschofskagraben"                 # Kumrodna: nur der gesperrte Abschnitt (von Hand)
+    bereich: "Wehrkanal"
+    manual:
+      - line: [[51.874140, 14.005640], [51.873769, 14.005693], [51.873593, 14.005594], [51.872936, 14.006192], [51.872949, 14.006340], [51.872850, 14.006925], [51.872682, 14.006900], [51.872474, 14.007668]]
 
   - match: "dritter freiheitskanal"
     ways: ["Dritter Freiheitskanal", "III. Freiheitskanal"]
