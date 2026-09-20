@@ -109,12 +109,12 @@ regeln:
   - match: "dresslerstrom"
     ways: ["Dresslerstrom"]
 
-  - match: "lehder graben"
+  - match: "lehder graben"                     # nur ca. 20 m: Ausfahrt Ruhehafen / Stufenbrücke
     bereich: "Ruhehafen"
-    genau: false
     manual:
-      - point: [51.867369, 13.974167]
-        radius_m: 300
+      - point: [51.867300, 13.974246]
+        radius_m: 30
+
 
   - match: "südumfluter"
     ways: ["Südumfluter"]
