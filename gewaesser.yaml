@@ -5,46 +5,58 @@
 # 'manual' (von Hand eingetragene Koordinaten, Breite dann Länge) hat Vorrang vor der OSM-Suche.
 #   - point: [Breite, Länge]  + radius_m  -> Kreis um eine Stelle
 #   - line:  [[Breite, Länge], ...]        -> Linie entlang eines Abschnitts
+# WICHTIG: Bei den von Hand eingetragenen Regeln steht ein 'bereich'-Stichwort. Die Regel greift nur,
+# wenn dieses Wort im Feld "Bereich" der LBV-Seite vorkommt. Wird dasselbe Gewässer an einer ANDEREN
+# Stelle gesperrt (oder ändert die LBV den Wortlaut), erscheint in der Seitenleiste die rote Warnung
+# "Nicht auf der Karte verortet" -> dann hier eine neue Regel ergänzen.
 # genau: false  -> im Popup steht "Abschnitt nur ungefähr eingezeichnet"
 
 regeln:
   # ---------- von Hand eingetragen ----------
   - match: "zeitzfließ"                        # Zeitzschleuse, Wehr 107
+    bereich: "Zeitzschleuse"
     manual:
       - point: [51.870281, 13.995952]
         radius_m: 200
 
   - match: "stilles fließ"                     # Kanu-Fischpass, Wehr 31
+    bereich: "Fischpass"
     manual:
       - point: [51.860809, 14.090642]
         radius_m: 150
 
   - match: "großes fließ"                      # zweite Brücke unterhalb Wehr 116
+    bereich: "Wehr 116"
     manual:
       - point: [51.899654, 13.972979]
         radius_m: 150
 
   - match: "obere ragower kahnfahrt"           # Bahnlinie Cottbus-Berlin bis Einmündung
+    bereich: "Bahnlinie"
     genau: false
     manual:
       - line: [[51.890744, 13.91200451], [51.899211, 13.932021]]
 
   - match: "mittelkanal"                       # Weidengraben bis Burg-Lübbener-Kanal
+    bereich: "Weidengraben"
     genau: false
     manual:
       - line: [[51.868441, 14.084899], [51.867475, 14.089899]]
 
   - match: "nordfließ"                         # Schleuse Kannomühle, Wehr 52
+    bereich: "Kannom"
     manual:
       - point: [51.893568, 14.055556]
         radius_m: 200
 
   - match: "neu lübbenauer kahnfahrt"          # Schleuse Neu Lübbenau
+    bereich: "Neu Lübbenau"
     manual:
       - point: [52.075680, 13.885826]
         radius_m: 200
 
   - match: "burg-lübbener-kanal"               # Kalkofenschleuse, Wehr 119
+    bereich: "Kalkofen"
     manual:
       - point: [51.886174, 13.968035]
         radius_m: 200
@@ -98,10 +110,11 @@ regeln:
     ways: ["Dresslerstrom"]
 
   - match: "lehder graben"
-    ways: ["Lehder Graben"]
-    near: "Stufenbr.cke|Spreewaldhafen"
-    radius_m: 700
+    bereich: "Ruhehafen"
     genau: false
+    manual:
+      - point: [51.867369, 13.974167]
+        radius_m: 300
 
   - match: "südumfluter"
     ways: ["Südumfluter"]
