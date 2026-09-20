@@ -13,6 +13,7 @@ Aufruf:
 import argparse, json, math, os, re, sys, time
 from datetime import date, datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import requests
 import yaml
@@ -31,6 +32,14 @@ HEADERS = {"User-Agent": f"Spreewald-Sperrkarte/1.0 ({KONTAKT})", "Accept": "*/*
            "Referer": "https://github.com/"}
 BBOX = "51.70,13.70,52.10,14.40"          # grobe Box um den gesamten Spreewald (S,W,N,O)
 HERE = Path(__file__).parent
+def berlin_now():
+    """Aktuelle Zeit in Deutschland (GitHub-Rechner laufen in UTC)."""
+    try:
+        return datetime.now(ZoneInfo("Europe/Berlin"))
+    except Exception:
+        return datetime.now()
+
+
 WEEKDAYS = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
 
 
@@ -226,6 +235,7 @@ def find_rule(rules, row):
 def render(items, day, stand, out):
     tpl = (HERE / "template.html").read_text(encoding="utf-8")
     data = {"datum": f"{WEEKDAYS[day.weekday()]}, {day.strftime('%d.%m.%Y')}",
+            "iso": day.isoformat(), "erzeugt": berlin_now().strftime("%d.%m.%Y %H:%M"),
             "stand": stand, "items": items}
     payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
     Path(out).parent.mkdir(parents=True, exist_ok=True)
@@ -242,7 +252,7 @@ def main():
     ap.add_argument("--lookahead", type=int, default=7, help="Tage, für die 'bald' angezeigt wird")
     ap.add_argument("--out", default=str(HERE / "docs" / "index.html"))
     a = ap.parse_args()
-    day = datetime.strptime(a.date, "%Y-%m-%d").date() if a.date else date.today()
+    day = datetime.strptime(a.date, "%Y-%m-%d").date() if a.date else berlin_now().date()
 
     rows, stand = parse_rows(fetch_html(a.html))
     if not rows:                                            # Seitenstruktur geändert? Lieber laut scheitern

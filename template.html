@@ -16,6 +16,7 @@
   .it{border:1px solid #ddd;border-left:6px solid #999;border-radius:4px;padding:6px 8px;margin-bottom:8px;font-size:13px;cursor:pointer}
   .it:hover{background:#f5f5f5} .it b{display:block}
   .badge{font-size:11px;font-weight:700;color:#fff;border-radius:3px;padding:1px 5px;margin-right:4px}
+  .stale{background:#b00020;color:#fff;font-weight:700;padding:8px 10px;border-radius:4px;margin-bottom:10px;font-size:14px}
   .warn{color:#b00020;font-size:12px} .mut{color:#666;font-size:12px}
   h2{font-size:14px;margin:14px 0 6px}
   @media(max-width:700px){#wrap{flex-direction:column-reverse}#side{width:auto;max-width:none;height:40%}}
@@ -46,11 +47,16 @@ function popup(it){
 }
 
 const side=document.getElementById('side');
+function localIso(){const n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');}
+if(D.iso && D.iso!==localIso()){
+  side.append(el('div','stale','ACHTUNG: Diese Karte zeigt die Daten vom '+D.datum+' – NICHT von heute! Nicht verwenden, bis sie aktualisiert ist.'));
+}
 side.append(el('h1',null,'Sperrungen – '+D.datum));
 side.append(el('div','sub','Quelle: LBV Brandenburg'+(D.stand?' (Stand '+D.stand+')':'')+'. Maßgeblich bleibt die Beschilderung vor Ort.'));
 const leg=el('div','leg');
 ['gesperrt','eingeschraenkt','bald'].forEach(k=>{const s=el('span'); const w=el('span','sw'); w.style.borderColor=COL[k]; s.append(w,LAB[k]); leg.append(s);});
 side.append(leg);
+if(D.erzeugt) side.append(el('div','mut','Karte erzeugt: '+D.erzeugt+' Uhr'));
 
 const all=L.featureGroup().addTo(map);
 const order={gesperrt:0,eingeschraenkt:1,bald:2,gebiet:3,ruht:4};
@@ -63,6 +69,10 @@ items.forEach(it=>{
     const opt={color, weight:7, opacity:.9, dashArray: it.status==='bald'?'10 8':null};
     const lyr = g.t==='line' ? L.polyline(g.c,opt) : L.circle(g.c,{...opt,radius:g.r,weight:5,fillOpacity:.25});
     lyr.bindPopup(()=>popup(it)); lyr.addTo(all); layers.push(lyr);
+    if(g.t==='circle'){ // Punkt, der bei jedem Zoom sichtbar bleibt
+      const dot=L.circleMarker(g.c,{radius:8,color:'#fff',weight:2,fillColor:color,fillOpacity:1});
+      dot.bindPopup(()=>popup(it)); dot.addTo(all); layers.push(dot);
+    }
   });
   const row=el('div','it'); row.style.borderLeftColor = color || '#999';
   const head=el('b'); const bd=el('span','badge',LAB[it.status]); bd.style.background=color||'#777';
