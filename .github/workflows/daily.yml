@@ -2,7 +2,8 @@ name: Spreewald-Sperrkarte täglich
 on:
   schedule:
     - cron: "30 4 * * *"      # Karte aktualisieren: 04:30 UTC = 06:30 Sommerzeit / 05:30 Winterzeit (ohne Mail)
-    - cron: "30 6 * * *"      # Abgleich + Mail: 06:30 UTC = 08:30 Sommerzeit / 07:30 Winterzeit
+    - cron: "30 6 * * *"      # Abgleich + Mail/Push: 06:30 UTC = 08:30 Sommerzeit / 07:30 Winterzeit
+    - cron: "0 12 * * *"      # Abgleich + Mail/Push: 12:00 UTC = 14:00 Sommerzeit / 13:00 Winterzeit
   workflow_dispatch:
     inputs:
       testmail:
@@ -19,7 +20,7 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install -r requirements.txt
       - name: Karte bauen und Änderungen melden
-        run: python spreewald_sperrungen.py ${{ (github.event.schedule == '30 6 * * *' || github.event_name == 'workflow_dispatch') && '--notify' || '' }} ${{ inputs.testmail && '--test-mail' || '' }}
+        run: python spreewald_sperrungen.py ${{ (github.event.schedule == '30 6 * * *' || github.event.schedule == '0 12 * * *' || github.event_name == 'workflow_dispatch') && '--notify' || '' }} ${{ inputs.testmail && '--test-mail' || '' }}
         env:
           KONTAKT: ${{ secrets.KONTAKT }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
