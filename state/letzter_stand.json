@@ -1,0 +1,152 @@
+{
+ "stand": "18.09.2026",
+ "rows": [
+  {
+   "gewaesser": "Neu Lübbenauer Kahnfahrt (Sperrung)",
+   "bereich": "Unterspreewald, im Bereich der Schleuse Neu Lübbenau",
+   "zeitraum": "21.09.2026 bis 25.09.2026",
+   "grund": "Reparaturarbeiten an der Schleuse",
+   "hinweis": "Vollsperrung! Paddelboote können ungetragen werden."
+  },
+  {
+   "gewaesser": "Spree (Sperrung)",
+   "bereich": "Unterspreewald, im Bereich der Schleuse Hartmannsdorf",
+   "zeitraum": "19.10.2026 bis 04.01.2027",
+   "grund": "Reparaturarbeiten an den Schleusentoren",
+   "hinweis": "Vollsperrung! Paddelboote können an der Schleuse umgetragen werden."
+  },
+  {
+   "gewaesser": "Wotschofskagraben, Kumrodna (Sperrung)",
+   "bereich": "Oberspreewald, zwischen Wehrkanal und Burg-Lübbener-Kanal",
+   "zeitraum": "14.09.2026 bis 30.11.2026",
+   "grund": "Sedimentberäumung",
+   "hinweis": "Vollsperrung! Umfahrung über Wehrkanal"
+  },
+  {
+   "gewaesser": "Wolschina (Sperrung)",
+   "bereich": "Oberspreewald, zwischen Spree und Uska Luke",
+   "zeitraum": "14.09.2026 bis 30.11.2026",
+   "grund": "Sedimentberäumung",
+   "hinweis": "Vollsperrung! Umfahrung über Spree und Uska Luke"
+  },
+  {
+   "gewaesser": "Dritter Freiheitskanal (Sperrung)",
+   "bereich": "Oberspreewald, zwischen Bacerowa und Südumfluter",
+   "zeitraum": "14.09.2026 bis 30.11.2026",
+   "grund": "Sedimentberäumung",
+   "hinweis": "Vollsperrung! Östliche Umfahrung über Bancerowa, Erster Freiheitskanal und Südumfluter Westliche Umfahrung über Bancerowa, Spree, Uska Luke und Südumfluter"
+  },
+  {
+   "gewaesser": "Zeitzfließ (Sperrung)",
+   "bereich": "Oberspreewald, im Bereich der Zeitzschleuse am Wehr 107",
+   "zeitraum": "14.09.2026 bis 25.09.2026",
+   "grund": "Reparaturarbeiten an der Schleuse",
+   "hinweis": "Vollsperrung! Paddelboote können an der Schleuse umgetragen werden. Umfahrung über Zeitzfließ, Lehder Graben, Wehrkanal und Bürgerfließ"
+  },
+  {
+   "gewaesser": "Obere Ragower Kahnfahrt (Sperrung)",
+   "bereich": "Oberspreewald, zwischen Bahnlinie Cottbus-Berlin und Einmündung in die Spree",
+   "zeitraum": "14.09.2026 bis 30.11.2026, Montag bis Freitag",
+   "grund": "Sedimentberäumung",
+   "hinweis": "Vollsperrung! Fahrzeuge des Hafenbetreibers und des Bootsverleih können nach Rücksprache mit dem Vorortverantwortlichen passieren."
+  },
+  {
+   "gewaesser": "Nordfließ (Einschränkung)",
+   "bereich": "Oberspreewald, Neu Zauche, im Bereich der Schleuse Kannomühle am Wehr 52",
+   "zeitraum": "24.08.2026 bis 30.09.2026",
+   "grund": "Reparaturarbeiten an den Ober- und Unterwasserstegen",
+   "hinweis": "Die Schleuse ist passierbar, es werden Behelfsstege errichtet. Bitte die Hinweise der Vorortverantwortlichen beachten."
+  },
+  {
+   "gewaesser": "Spree (Sperrung)",
+   "bereich": "Oberspreewald, Ortslage Burg, im Bereich der Brücke 08/78 Conradsbrücke, Schwarze Ecke 1",
+   "zeitraum": "21.09. 2026 bis 09.10.2026",
+   "grund": "Ersatzneubau des Brückenbauwerkes",
+   "hinweis": "Vollsperrung!"
+  },
+  {
+   "gewaesser": "Lehder Graben (Sperrung",
+   "bereich": "Oberspreewald, Ortslage Lübbenau zwischen Ausfahrt Ruhehafen und Spree im Bereich der Stufenbrücke",
+   "zeitraum": "17.08.2026 bis 04.12.2026",
+   "grund": "Ersatzneubau der Stufenbrücke am Grossen Spreewaldhafen",
+   "hinweis": "Vollsperrung! Umfahrung über Lehder Graben, Südumfluter und Spree"
+  },
+  {
+   "gewaesser": "Erster Freiheitskanal (Sperrung)",
+   "bereich": "Oberspreewald, Raum Leipe, zwischen E-Kanal und Semisch und Semisch und Verbindungsgraben",
+   "zeitraum": "05.08.2026 bis 30.09.2026",
+   "grund": "Entschlammungsarbeiten",
+   "hinweis": "Vollsperrung der genannten Abschnitte! Bitte die Ausschilderungen Vorort beachten da die einzelnen Abschnitte nacheinander abgearbeitet und gesperrt werden."
+  },
+  {
+   "gewaesser": "Oberspreewald (Einschränkungen / Behinderungen / Sperrungen)",
+   "bereich": "Oberspreewald, Landkreise Spree-Neiße, Oberspreewald-Lausitz und Dahme Spreewald, von Burg (Spreewald) bis Untere Ragower Kahnfahrt",
+   "zeitraum": "10.06.2026 bis 30.10.2026",
+   "grund": "Krautungsarbeiten",
+   "hinweis": "Auf Grund der Krautungsarbeiten kann es zu kurzfristigen, temporären und zeitlich befristeten Sperrungen schiffbarer Landesgewässer kommen. Beachten Sie bitte die Hinweise die Ihnen durch die Schifffahrtszeichen gegeben werden. Das passieren eventuell gesperrter Bereiche ist nur nach erfolgter Freigabe durch die Vorort Verantwortlichen unter größter Vorsicht möglich. Den Anweisungen der Vorort Verantwortlichen ist unbedingt Folge zu leisten!"
+  },
+  {
+   "gewaesser": "Stilles Fließ (Sperrung)",
+   "bereich": "Oberspreewald, Ortslage Burg, im Bereich des des Kanu-Fischpass am Wehr 31",
+   "zeitraum": "20.05.2026 bis auf Widerruf",
+   "grund": "nicht gegebene Verkehrssicherheit der Steganlage des Kanu-Fischpass",
+   "hinweis": "Sperrung des Kanu-Fischpass. Paddelboote können an der Schleuse umgetragen werden."
+  },
+  {
+   "gewaesser": "Spree (Einschränkungen)",
+   "bereich": "Oberspreewald, Ortslage Burg, zwischen Jedroschleuse am Wehr 27 und Kreisgrenze SPN/OSL",
+   "zeitraum": "11.05.2026 bis 02.10.2026",
+   "grund": "Ufersicherungarbeiten",
+   "hinweis": "Es kann zu Einschränkungen der Schifffahrt kommen, Das Passieren des halbseitig gesperrten Bereiches ist nur nach Freigabe durch den Vorort Verantwortlichen und unter größter Vorsicht möglich. Den Anweisungen der Vorort Verantwortlichen ist unbedingt Folge zu leisten!"
+  },
+  {
+   "gewaesser": "Dresslerstrom (Sperrung)",
+   "bereich": "Unterspreewald, von Puhlstrom bis Wasserburger Spree",
+   "zeitraum": "03.02.2026 bis auf Widerruf",
+   "grund": "Verkehrsgefährdung durch eine standsichere Brücke",
+   "hinweis": "Vollsperrung, ein passieren des Gewässers ist nicht möglich! Nördliche Umfahrung über Puhlstrom, Langer-Horst-Graben und Wasserburger Spree. Südliche Umfahrung über Puhlstrom, Laubengang, Krausnicker Strom und Wasserburger Spree."
+  },
+  {
+   "gewaesser": "Mittelkanal / Weidenfließ (Sperrung)",
+   "bereich": "Oberspreewald, zwischen Weidengraben und Burg-Lübbener-Kanal",
+   "zeitraum": "05.01.2026 bis 30.10.2026",
+   "grund": "Ersatzneubau Wehr 38 (Werboa)",
+   "hinweis": "Vollsperrung! Südliche Umfahrung über Weidengraben und Burg-Lübbener-Kanal Nördliche Umfahrung über Weidengraben, Großes Fließ, Leiper Graben und Burg-Lübbener-Kanal"
+  },
+  {
+   "gewaesser": "Spree (Sperrung)",
+   "bereich": "Unterspreewald, im Bereich der Schleuse Schlepziger Mühle",
+   "zeitraum": "sofort bis auf Widerruf",
+   "grund": "Defekt der Schleuse Schlepziger Mühle",
+   "hinweis": "Östliche und westliche Umfahrung möglich"
+  },
+  {
+   "gewaesser": "Großes Fließ (Sperrung)",
+   "bereich": "Oberspreewald, Wasserfläche des Großen Fließ unter der zweiten Brücke unterhalb des Wehr 116, in Fließrichtung gesehen, gesperrt. Durchfahrt durch die Brücke verboten!",
+   "zeitraum": "23.11.2023 bis auf Widerruf",
+   "grund": "Verkehrsgefährdung durch eine nicht standsichere Brücke",
+   "hinweis": "Ein Passieren des gesperrten Gewässerabschnittes ist nicht möglich! Nördliche Umfahrung über Dittmar Kanal, Eichgraben, Saukanal, Nordfließ, Nordumfluter und Burg-Lübbener-Kanal. Südliche Umfahrung über Wehrkanal, Bürgerfließ, Lehder Fließ, Burg-Lübbener-Kanal."
+  },
+  {
+   "gewaesser": "Südumfluter (Sperrung)",
+   "bereich": "Oberspreewald, von Spree bis Wehr 15, Friedhofswehr",
+   "zeitraum": "10.12.2024 bis auf Widerruf",
+   "grund": "Verkehrsgefährdung durch nicht standsichere Bäume",
+   "hinweis": "Umfahrung über Spree, Scheidungsfließ, Kleine Scheidung, Kleines Leineweberfließ und Südumfluter möglich."
+  },
+  {
+   "gewaesser": "Spree (Sperrung)",
+   "bereich": "Unterspreewald, rechtes Brückenjoch, in Fließrichtung gesehen, der Eisenbahnbrücke bei Hartmannsdorf",
+   "zeitraum": "11.11.2024 bis auf Widerruf",
+   "grund": "Verkehrsgefährdung durch nicht feste Betonteile des Brückenbogens",
+   "hinweis": "linkes Brückenjoch kann passiert werden"
+  },
+  {
+   "gewaesser": "Burg-Lübbener-Kanal (Sperrung)",
+   "bereich": "Oberspreewald, im Bereich der Kalkofenschleuse am Wehr 119",
+   "zeitraum": "25.07.2025 bis auf Widerruf",
+   "grund": "Verkehrssicherheit der Anlage nicht gegeben",
+   "hinweis": "Schleuse gesperrt, Passieren für Kähne nicht möglich! Paddelboote können umgetragen werden. Umfahrung über Puschhalle, Spree und Lübbenauer Buschspree"
+  }
+ ]
+}
