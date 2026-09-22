@@ -10,7 +10,9 @@ Aufruf:
     python spreewald_sperrungen.py --date 2026-09-21
     python spreewald_sperrungen.py --html tests/fixture.html --no-osm   # Test ohne Netz
 """
-import argparse, json, math, os, re, sys, time
+import argparse, base64, json, math, os, re, smtplib, sys, time
+from collections import Counter
+from email.message import EmailMessage
 from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -244,12 +246,181 @@ def render(items, day, stand, out):
         json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
 
 
+# ----------------------------------------------------------------------------- 5. Änderungs-Mail
+STATE = HERE / "state" / "letzter_stand.json"
+KEYS = ("gewaesser", "bereich", "zeitraum", "grund", "hinweis")
+LABELS = {"zeitraum": "Zeitraum", "grund": "Grund", "hinweis": "Hinweis"}
+
+
+def norm(t):
+    return re.sub(r"\s+", " ", t or "").strip()
+
+
+def sig(row):
+    return tuple(norm(row[k]) for k in KEYS)
+
+
+def compare(old_rows, new_rows):
+    """-> (neu, geändert [(alt, neu)], entfernt); alles als Tupel in der Reihenfolge KEYS."""
+    co, cn = Counter(sig(r) for r in old_rows), Counter(sig(r) for r in new_rows)
+    added, removed, changed = list((cn - co).elements()), list((co - cn).elements()), []
+    for a in added[:]:
+        for r in removed:
+            if r[:2] == a[:2]:                                # gleiches Gewässer + gleicher Bereich
+                changed.append((r, a)); added.remove(a); removed.remove(r)
+                break
+    return added, changed, removed
+
+
+def position_hint(t, rules):
+    row = dict(zip(KEYS, t))
+    if row["gewaesser"].lower().startswith("oberspreewald"):
+        return "Gebietshinweis (keine Kartenposition nötig)"
+    rule = find_rule(rules, row)
+    if rule and (rule.get("manual") or rule.get("ways") or rule.get("near")):
+        return "Position hinterlegt"
+    return "ACHTUNG: KEINE Position hinterlegt -> bitte in gewaesser.yaml ergänzen"
+
+
+def build_mail(added, changed, removed, stand, rules):
+    n = len(added) + len(changed) + len(removed)
+    parts = []
+    if added:
+        parts.append(f"{len(added)} neu")
+    if changed:
+        parts.append(f"{len(changed)} geändert")
+    if removed:
+        parts.append(f"{len(removed)} entfernt")
+    subject = "Spreewald-Sperrungen: " + ", ".join(parts)
+    L = [f"Auf der LBV-Seite haben sich die Sperrungen geändert (LBV-Stand: {stand or 'unbekannt'}).", ""]
+    if added:
+        L += [f"NEU ({len(added)})", ""]
+        for t in added:
+            r = dict(zip(KEYS, t))
+            L += [f"* {r['gewaesser']}", f"  Bereich:  {r['bereich']}", f"  Zeitraum: {r['zeitraum']}",
+                  f"  Grund:    {r['grund']}", f"  Hinweis:  {r['hinweis']}",
+                  f"  Karte:    {position_hint(t, rules)}", ""]
+    if changed:
+        L += [f"GEÄNDERT ({len(changed)})", ""]
+        for old, new in changed:
+            r = dict(zip(KEYS, new))
+            L += [f"* {r['gewaesser']}", f"  Bereich:  {r['bereich']}"]
+            for i, k in enumerate(KEYS):
+                if k in LABELS and old[i] != new[i]:
+                    L += [f"  {LABELS[k]} vorher:  {old[i]}", f"  {LABELS[k]} jetzt:   {new[i]}"]
+            L.append("")
+    if removed:
+        L += [f"ENTFERNT / nicht mehr aufgeführt ({len(removed)})", ""]
+        for t in removed:
+            r = dict(zip(KEYS, t))
+            L += [f"* {r['gewaesser']}", f"  Bereich:  {r['bereich']}", f"  Zeitraum: {r['zeitraum']}", ""]
+    map_url = os.environ.get("MAP_URL")
+    if map_url:
+        L.append(f"Karte:      {map_url}")
+    L += [f"LBV-Seite:  {URL}", "", "Diese Mail wurde automatisch erzeugt. Maßgeblich sind die LBV-Seite und die Beschilderung vor Ort."]
+    return subject, "\n".join(L), n
+
+
+def send_mail(subject, body):
+    host = os.environ.get("SMTP_HOST")
+    to = [x.strip() for x in re.split(r"[;,]", os.environ.get("MAIL_TO", "")) if x.strip()]
+    if not host or not to:
+        print("  (Mail nicht konfiguriert: SMTP_HOST / MAIL_TO fehlen)", file=sys.stderr)
+        return False
+    user, pw = os.environ.get("SMTP_USER"), os.environ.get("SMTP_PASS")
+    sender = os.environ.get("MAIL_FROM") or user or "sperrkarte@localhost"
+    port = int(os.environ.get("SMTP_PORT") or 587)
+    mode = (os.environ.get("SMTP_SECURITY") or "starttls").lower()      # starttls | ssl | none
+    msg = EmailMessage()
+    msg["Subject"], msg["From"], msg["To"] = subject, sender, ", ".join(to)
+    msg.set_content(body)
+    try:
+        smtp = smtplib.SMTP_SSL(host, port, timeout=30) if mode == "ssl" else smtplib.SMTP(host, port, timeout=30)
+        with smtp as srv:
+            if mode == "starttls":
+                srv.starttls()
+            if user and pw:
+                srv.login(user, pw)
+            srv.send_message(msg)
+        return True
+    except Exception as e:                                                # niemals Passwörter ausgeben
+        print(f"  ! Mailversand fehlgeschlagen: {type(e).__name__}: {e}", file=sys.stderr)
+        return False
+
+
+def encode_header(text):
+    """RFC-2047-Kodierung, damit Umlaute in HTTP-Kopfzeilen sicher ankommen."""
+    return "=?UTF-8?B?" + base64.b64encode(text.encode("utf-8")).decode("ascii") + "?="
+
+
+def send_ntfy(subject, body):
+    """Push-Benachrichtigung über ntfy.sh (kostenlos, ohne Anmeldung). Doku: https://ntfy.sh/docs/"""
+    topic = os.environ.get("NTFY_TOPIC")
+    if not topic:
+        print("  (Push nicht konfiguriert: NTFY_TOPIC fehlt)", file=sys.stderr)
+        return False
+    server = (os.environ.get("NTFY_SERVER") or "https://ntfy.sh").rstrip("/")
+    try:
+        r = requests.post(f"{server}/{topic}", data=body.encode("utf-8"),
+                          headers={"Title": encode_header(subject), "Priority": "default"}, timeout=15)
+        r.raise_for_status()
+        return True
+    except Exception as e:
+        print(f"  ! Push-Versand fehlgeschlagen: {type(e).__name__}: {e}", file=sys.stderr)
+        return False
+
+
+def save_state(rows, stand, state_file):
+    state_file.parent.mkdir(parents=True, exist_ok=True)
+    state_file.write_text(json.dumps({"stand": stand, "rows": [dict(zip(KEYS, sig(r))) for r in rows]},
+                                     ensure_ascii=False, indent=1), encoding="utf-8")
+
+
+def notify_changes(rows, stand, rules, state_file):
+    if not state_file.exists():
+        save_state(rows, stand, state_file)
+        print("Änderungs-Mail: erster Lauf, Ausgangsstand gespeichert (keine Mail).")
+        return
+    old = json.loads(state_file.read_text(encoding="utf-8"))["rows"]
+    added, changed, removed = compare(old, rows)
+    if not (added or changed or removed):
+        print("Änderungs-Mail: keine Änderungen seit dem letzten Lauf.")
+        return
+    subject, body, n = build_mail(added, changed, removed, stand, rules)
+    print(f"Änderungs-Mail: {n} Änderung(en) erkannt -> {subject}")
+    delivered = False
+    issue_file = os.environ.get("ISSUE_FILE")            # GitHub-Hinweis: Workflow legt daraus ein Issue an
+    if issue_file:
+        users = " ".join(u if u.startswith("@") else "@" + u
+                         for u in re.split(r"[\s,;]+", os.environ.get("NOTIFY_USERS", "")) if u)
+        text = (users + "\n\n" if users else "") + "```text\n" + body + "\n```\n"
+        Path(issue_file).write_text(text, encoding="utf-8")
+        Path(issue_file).with_suffix(".title").write_text(subject, encoding="utf-8")
+        print(f"  GitHub-Hinweis vorbereitet ({issue_file}).")
+        delivered = True
+    if os.environ.get("SMTP_HOST"):
+        if send_mail(subject, body):
+            print("  Mail gesendet.")
+            delivered = True
+    if os.environ.get("NTFY_TOPIC"):
+        if send_ntfy(subject, body):
+            print("  Push-Nachricht gesendet.")
+            delivered = True
+    if delivered:
+        save_state(rows, stand, state_file)               # nur nach erfolgreicher Zustellung merken
+    else:
+        print("::warning::Änderungen erkannt, aber kein Kanal (Mail/Push/GitHub-Hinweis) aktiv - beim nächsten Lauf erneut versucht.")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", help="YYYY-MM-DD (Standard: heute)")
     ap.add_argument("--html", help="lokale HTML-Datei statt Live-Seite (Test)")
     ap.add_argument("--no-osm", action="store_true", help="keine Overpass-Abfragen (nur Cache/manual)")
     ap.add_argument("--lookahead", type=int, default=7, help="Tage, für die 'bald' angezeigt wird")
+    ap.add_argument("--notify", action="store_true", help="bei Änderungen der LBV-Tabelle eine Mail senden")
+    ap.add_argument("--test-mail", action="store_true", help="nur eine Testmail senden (Mailkonfiguration prüfen)")
+    ap.add_argument("--state-file", default=str(STATE))
     ap.add_argument("--out", default=str(HERE / "docs" / "index.html"))
     a = ap.parse_args()
     day = datetime.strptime(a.date, "%Y-%m-%d").date() if a.date else berlin_now().date()
@@ -278,6 +449,29 @@ def main():
     for i in items:
         print(f"{i['status']:15} {'auf Karte ' if i['geom'] else 'OHNE Geo  '} {i['gewaesser']} | {i['bereich'][:60]}")
     print(f"\n{len(items)} Einträge für {day} -> {a.out}")
+
+    if a.notify:
+        notify_changes(rows, stand, rules, Path(a.state_file))
+    if a.test_mail:
+        subj = "Spreewald-Sperrkarte: Testnachricht"
+        body = "Das ist eine Testnachricht der Spreewald-Sperrkarte. Wenn du sie liest, funktioniert dieser Kanal."
+        tried, ok = False, True
+        if os.environ.get("SMTP_HOST"):
+            tried = True
+            if send_mail(subj, body):
+                print("Testmail gesendet.")
+            else:
+                ok = False
+        if os.environ.get("NTFY_TOPIC"):
+            tried = True
+            if send_ntfy(subj, body):
+                print("Test-Push gesendet.")
+            else:
+                ok = False
+        if not tried:
+            sys.exit("FEHLER: weder Mail (SMTP_HOST) noch Push (NTFY_TOPIC) konfiguriert.")
+        if not ok:
+            sys.exit("FEHLER: Testnachricht konnte nicht an alle konfigurierten Kanäle gesendet werden (Details siehe oben).")
 
 
 if __name__ == "__main__":
