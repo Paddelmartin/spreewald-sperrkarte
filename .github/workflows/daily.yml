@@ -1,9 +1,15 @@
 name: Spreewald-Sperrkarte täglich
 on:
   schedule:
-    - cron: "30 4 * * *"      # 04:30 UTC = 06:30 Sommerzeit / 05:30 Winterzeit
-  workflow_dispatch: {}       # manuell auslösbar
-permissions: { contents: read, pages: write, id-token: write }
+    - cron: "30 4 * * *"      # Karte aktualisieren: 04:30 UTC = 06:30 Sommerzeit / 05:30 Winterzeit (ohne Mail)
+    - cron: "30 6 * * *"      # Abgleich + Mail: 06:30 UTC = 08:30 Sommerzeit / 07:30 Winterzeit
+  workflow_dispatch:
+    inputs:
+      testmail:
+        description: "Nur eine Testnachricht senden (Mail und/oder Push), um die Einstellungen zu prüfen"
+        type: boolean
+        default: false
+permissions: { contents: write, pages: write, id-token: write, issues: write }
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -12,9 +18,33 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - run: pip install -r requirements.txt
-      - run: python spreewald_sperrungen.py
+      - name: Karte bauen und Änderungen melden
+        run: python spreewald_sperrungen.py ${{ (github.event.schedule == '30 6 * * *' || github.event_name == 'workflow_dispatch') && '--notify' || '' }} ${{ inputs.testmail && '--test-mail' || '' }}
         env:
           KONTAKT: ${{ secrets.KONTAKT }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_SECURITY: ${{ secrets.SMTP_SECURITY }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          NTFY_SERVER: ${{ secrets.NTFY_SERVER }}
+          ISSUE_FILE: ${{ vars.ISSUE_NOTIFY == 'true' && 'aenderungen.md' || '' }}
+          NOTIFY_USERS: ${{ vars.NOTIFY_USERS }}
+          MAP_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+      - name: Änderungen als GitHub-Hinweis anlegen
+        if: hashFiles('aenderungen.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue create --title "$(cat aenderungen.title)" --body-file aenderungen.md
+      - name: Stand für den nächsten Vergleich speichern
+        run: |
+          git config user.name "sperrkarte-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add state/letzter_stand.json || true
+          git diff --cached --quiet || (git commit -m "LBV-Stand aktualisiert" && git push)
       - uses: actions/upload-pages-artifact@v3
         with: { path: docs }
   deploy:
