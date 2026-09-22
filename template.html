@@ -18,15 +18,14 @@
   html,body{height:100%;margin:0;font-family:'Poppins',system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:#2b2f33}
   #wrap{display:flex;height:100%}
   #side{width:380px;max-width:42vw;overflow-y:auto;background:var(--bg);border-right:1px solid var(--line);box-sizing:border-box}
-  #map{flex:1}
+  #map{flex:1;position:relative}
 
-  #brand{display:flex;align-items:center;gap:12px;padding:14px 14px 12px;background:var(--card);
-    border-bottom:3px solid var(--brand-orange);position:relative;overflow:hidden}
-  #brand img{height:48px;width:auto;flex:none}
-  #brand .tt{min-width:0}
-  #brand .tt b{display:block;color:var(--brand-blue-dark);font-size:13px;font-weight:700;line-height:1.15}
-  #brand .tt span{display:block;color:#7a8492;font-size:11px}
-  .wave{position:absolute;left:0;right:0;bottom:-1px;height:10px;pointer-events:none}
+  #mapband{position:absolute;top:0;left:0;right:0;height:60px;z-index:460;box-sizing:border-box;
+    background:rgba(255,255,255,.94);border-bottom:3px solid var(--brand-orange);
+    box-shadow:0 2px 10px rgba(15,40,60,.12);display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+  #mapband img{height:36px;width:auto;display:block}
+  #mapband .time{font-size:12px;color:#6b7480;white-space:nowrap}
+  .leaflet-top{top:68px !important}
 
   .content{padding:12px 14px}
   h1{font-size:18px;margin:2px 0 2px;color:var(--brand-blue-dark);font-weight:700}
@@ -81,16 +80,12 @@ function popup(it){
 
 const side=document.getElementById('side');
 
-// Kopfbereich mit Logo
-const brand=el('div'); brand.id='brand';
-const logoImg=document.createElement('img'); logoImg.src=LOGO; logoImg.alt='Bootsverleih Richter / Kajaksports';
-const tt=el('div','tt'); tt.append(el('b',null,'Bootsverleih Richter'), el('span',null,'Spreewald-Sperrkarte'));
-brand.append(logoImg, tt);
-const wave=document.createElementNS('http://www.w3.org/2000/svg','svg');
-wave.setAttribute('class','wave'); wave.setAttribute('viewBox','0 0 400 10'); wave.setAttribute('preserveAspectRatio','none');
-wave.innerHTML='<path d="M0,6 C50,0 100,10 150,5 C200,0 250,10 300,5 C350,0 375,8 400,4 L400,10 L0,10 Z" fill="#0F63A6" opacity="0.15"/>';
-brand.append(wave);
-side.append(brand);
+// Logo-Band über der Karte
+const mapband=el('div'); mapband.id='mapband';
+const bandLogo=document.createElement('img'); bandLogo.src=LOGO; bandLogo.alt='Bootsverleih Richter / Kajaksports';
+const bandTime=el('div','time', D.erzeugt ? 'Aktualisiert '+D.erzeugt.slice(-5)+' Uhr' : '');
+mapband.append(bandLogo, bandTime);
+document.getElementById('map').appendChild(mapband);
 
 const content=el('div'); content.className='content'; side.append(content);
 
