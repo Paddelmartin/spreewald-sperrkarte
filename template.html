@@ -40,7 +40,9 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
 function el(tag, cls, text){const e=document.createElement(tag); if(cls)e.className=cls; if(text!=null)e.textContent=text; return e;}
 function popup(it){
   const d=el('div'); const b=el('b',null,it.gewaesser); d.append(b, el('div',null,LAB[it.status]+' – '+it.bereich));
-  d.append(el('div','mut','Zeitraum: '+it.zeitraum), el('div',null,it.hinweis));
+  d.append(el('div','mut','Zeitraum: '+it.zeitraum));
+  if(it.grund) d.append(el('div','mut','Grund: '+it.grund));
+  d.append(el('div',null,it.hinweis));
   if(it.paddel) d.append(el('div',null,'Paddelboote: Umtragen möglich'));
   if(!it.genau) d.append(el('div','warn','Abschnitt nur ungefähr eingezeichnet – Text beachten!'));
   return d;
@@ -77,6 +79,7 @@ items.forEach(it=>{
   const row=el('div','it'); row.style.borderLeftColor = color || '#999';
   const head=el('b'); const bd=el('span','badge',LAB[it.status]); bd.style.background=color||'#777';
   head.append(bd, it.gewaesser); row.append(head, el('div','mut',it.bereich), el('div','mut','Zeitraum: '+it.zeitraum));
+  if(it.grund) row.append(el('div','mut','Grund: '+it.grund));
   if(it.hinweis) row.append(el('div',null,it.hinweis));
   if(color && !layers.length){ row.append(el('div','warn','⚠ Nicht auf der Karte verortet – bitte Text beachten!')); }
   row.onclick=()=>{ if(layers.length){ map.fitBounds(L.featureGroup(layers).getBounds().pad(.5)); layers[0].openPopup(); } };
