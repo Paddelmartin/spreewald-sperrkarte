@@ -49,10 +49,20 @@ WEEKDAYS = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"
 def fetch_html(path=None):
     if path:
         return Path(path).read_text(encoding="utf-8")
-    r = requests.get(URL, timeout=30, headers={"User-Agent": "Spreewald-Sperrkarte/1.0 (intern)"})
-    r.raise_for_status()
-    r.encoding = r.apparent_encoding if not r.encoding else r.encoding
-    return r.text
+    last_err = None
+    for attempt in range(3):
+        if attempt:
+            wait = 20 * attempt                             # 20s, dann 40s Pause vor dem naechsten Versuch
+            print(f"  ... LBV-Seite nicht erreichbar, warte {wait}s und versuche es erneut ({attempt+1}/3)", file=sys.stderr)
+            time.sleep(wait)
+        try:
+            r = requests.get(URL, timeout=30, headers={"User-Agent": "Spreewald-Sperrkarte/1.0 (intern)"})
+            r.raise_for_status()
+            r.encoding = r.apparent_encoding if not r.encoding else r.encoding
+            return r.text
+        except Exception as e:
+            last_err = e
+    raise last_err
 
 
 def parse_rows(html):
@@ -412,6 +422,54 @@ def notify_changes(rows, stand, rules, state_file):
         print("::warning::Änderungen erkannt, aber kein Kanal (Mail/Push/GitHub-Hinweis) aktiv - beim nächsten Lauf erneut versucht.")
 
 
+def load_own_notices(path, day, lookahead):
+    """Liest eigene, von Mitarbeitern gepflegte Hinweise (eigene-sperrungen.yaml).
+    Fehlerhafte einzelne Einträge werden übersprungen (mit Warnung), statt den ganzen Lauf abzubrechen."""
+    if not path.exists():
+        return []
+    try:
+        data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    except Exception as e:
+        print(f"::warning::eigene-sperrungen.yaml konnte nicht gelesen werden: {e}", file=sys.stderr)
+        return []
+    items = []
+    for i, e in enumerate(data.get("hinweise") or [], start=1):
+        try:
+            gew = str(e["gewaesser"]).strip()
+            bereich = str(e.get("bereich", "")).strip()
+            grund = str(e.get("grund", "")).strip()
+            hinweis = str(e.get("hinweis", "")).strip()
+            status = str(e.get("status", "gesperrt")).strip().lower()
+            if status not in ("gesperrt", "eingeschraenkt"):
+                raise ValueError(f"status muss 'gesperrt' oder 'eingeschraenkt' sein, nicht '{status}'")
+            von_txt, bis_txt = str(e.get("von", "")).strip(), str(e.get("bis", "")).strip()
+            von = datetime.strptime(von_txt, "%d.%m.%Y").date() if von_txt else None
+            bis = datetime.strptime(bis_txt, "%d.%m.%Y").date() if bis_txt else None
+            if von and day < von:
+                if (von - day).days > lookahead:
+                    continue
+                st = "bald"
+            elif bis and day > bis:
+                continue
+            else:
+                st = status
+            zeitraum = (f"ab {von.strftime('%d.%m.%Y')}" if von and not bis else
+                        f"{von.strftime('%d.%m.%Y')} bis {bis.strftime('%d.%m.%Y')}" if von and bis else
+                        f"bis {bis.strftime('%d.%m.%Y')}" if bis else "bis auf Weiteres")
+            geom = []
+            if "punkt" in e:
+                geom = [{"t": "circle", "c": [float(e["punkt"][0]), float(e["punkt"][1])],
+                        "r": int(e.get("radius_m", 200))}]
+            elif "linie" in e:
+                geom = [{"t": "line", "c": [[float(p[0]), float(p[1])] for p in e["linie"]]}]
+            items.append(dict(gewaesser=gew, bereich=bereich, zeitraum=zeitraum, grund=grund, hinweis=hinweis,
+                              status=st, start=von.isoformat() if von else None, ende=bis.isoformat() if bis else None,
+                              geom=geom, genau=True, paddel=False, quelle="eigen"))
+        except Exception as ex:
+            print(f"::warning::eigene-sperrungen.yaml, Eintrag {i} übersprungen ({ex})", file=sys.stderr)
+    return items
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", help="YYYY-MM-DD (Standard: heute)")
@@ -443,11 +501,16 @@ def main():
             row["geom"] = build_geometry(rule, geo)
             row["genau"] = rule.get("genau", True)
         row["paddel"] = bool(re.search(r"paddelboote können.*(umgetragen|ungetragen)", row["hinweis"], re.I))
+        row["quelle"] = "lbv"
         items.append(row)
+
+    eigene = load_own_notices(HERE / "eigene-sperrungen.yaml", day, a.lookahead)
+    items.extend(eigene)
 
     render(items, day, stand, a.out)
     for i in items:
-        print(f"{i['status']:15} {'auf Karte ' if i['geom'] else 'OHNE Geo  '} {i['gewaesser']} | {i['bereich'][:60]}")
+        marker = " (eigen)" if i.get("quelle") == "eigen" else ""
+        print(f"{i['status']:15} {'auf Karte ' if i['geom'] else 'OHNE Geo  '} {i['gewaesser']}{marker} | {i['bereich'][:60]}")
     print(f"\n{len(items)} Einträge für {day} -> {a.out}")
 
     if a.notify:
