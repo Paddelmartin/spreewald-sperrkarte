@@ -1,13 +1,6 @@
 {
- "stand": "18.09.2026",
+ "stand": "24.09.2026",
  "rows": [
-  {
-   "gewaesser": "Neu Lübbenauer Kahnfahrt (Sperrung)",
-   "bereich": "Unterspreewald, im Bereich der Schleuse Neu Lübbenau",
-   "zeitraum": "21.09.2026 bis 25.09.2026",
-   "grund": "Reparaturarbeiten an der Schleuse",
-   "hinweis": "Vollsperrung! Paddelboote können ungetragen werden."
-  },
   {
    "gewaesser": "Spree (Sperrung)",
    "bereich": "Unterspreewald, im Bereich der Schleuse Hartmannsdorf",
