@@ -10,9 +10,8 @@ Aufruf:
     python spreewald_sperrungen.py --date 2026-09-21
     python spreewald_sperrungen.py --html tests/fixture.html --no-osm   # Test ohne Netz
 """
-import argparse, base64, json, math, os, re, smtplib, sys, time
+import argparse, base64, json, math, os, re, sys, time
 from collections import Counter
-from email.message import EmailMessage
 from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -256,7 +255,7 @@ def render(items, day, stand, out):
         json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
 
 
-# ----------------------------------------------------------------------------- 5. Änderungs-Mail
+# ----------------------------------------------------------------------------- 5. Änderungs-Benachrichtigung
 STATE = HERE / "state" / "letzter_stand.json"
 KEYS = ("gewaesser", "bereich", "zeitraum", "grund", "hinweis")
 LABELS = {"zeitraum": "Zeitraum", "grund": "Grund", "hinweis": "Hinweis"}
@@ -292,7 +291,7 @@ def position_hint(t, rules):
     return "ACHTUNG: KEINE Position hinterlegt -> bitte in gewaesser.yaml ergänzen"
 
 
-def build_mail(added, changed, removed, stand, rules):
+def build_message(added, changed, removed, stand, rules):
     n = len(added) + len(changed) + len(removed)
     parts = []
     if added:
@@ -327,35 +326,8 @@ def build_mail(added, changed, removed, stand, rules):
     map_url = os.environ.get("MAP_URL")
     if map_url:
         L.append(f"Karte:      {map_url}")
-    L += [f"LBV-Seite:  {URL}", "", "Diese Mail wurde automatisch erzeugt. Maßgeblich sind die LBV-Seite und die Beschilderung vor Ort."]
+    L += [f"LBV-Seite:  {URL}", "", "Diese Nachricht wurde automatisch erzeugt. Maßgeblich sind die LBV-Seite und die Beschilderung vor Ort."]
     return subject, "\n".join(L), n
-
-
-def send_mail(subject, body):
-    host = os.environ.get("SMTP_HOST")
-    to = [x.strip() for x in re.split(r"[;,]", os.environ.get("MAIL_TO", "")) if x.strip()]
-    if not host or not to:
-        print("  (Mail nicht konfiguriert: SMTP_HOST / MAIL_TO fehlen)", file=sys.stderr)
-        return False
-    user, pw = os.environ.get("SMTP_USER"), os.environ.get("SMTP_PASS")
-    sender = os.environ.get("MAIL_FROM") or user or "sperrkarte@localhost"
-    port = int(os.environ.get("SMTP_PORT") or 587)
-    mode = (os.environ.get("SMTP_SECURITY") or "starttls").lower()      # starttls | ssl | none
-    msg = EmailMessage()
-    msg["Subject"], msg["From"], msg["To"] = subject, sender, ", ".join(to)
-    msg.set_content(body)
-    try:
-        smtp = smtplib.SMTP_SSL(host, port, timeout=30) if mode == "ssl" else smtplib.SMTP(host, port, timeout=30)
-        with smtp as srv:
-            if mode == "starttls":
-                srv.starttls()
-            if user and pw:
-                srv.login(user, pw)
-            srv.send_message(msg)
-        return True
-    except Exception as e:                                                # niemals Passwörter ausgeben
-        print(f"  ! Mailversand fehlgeschlagen: {type(e).__name__}: {e}", file=sys.stderr)
-        return False
 
 
 def encode_header(text):
@@ -389,15 +361,15 @@ def save_state(rows, stand, state_file):
 def notify_changes(rows, stand, rules, state_file):
     if not state_file.exists():
         save_state(rows, stand, state_file)
-        print("Änderungs-Mail: erster Lauf, Ausgangsstand gespeichert (keine Mail).")
+        print("Änderungs-Benachrichtigung: erster Lauf, Ausgangsstand gespeichert (keine Nachricht).")
         return
     old = json.loads(state_file.read_text(encoding="utf-8"))["rows"]
     added, changed, removed = compare(old, rows)
     if not (added or changed or removed):
-        print("Änderungs-Mail: keine Änderungen seit dem letzten Lauf.")
+        print("Änderungs-Benachrichtigung: keine Änderungen seit dem letzten Lauf.")
         return
-    subject, body, n = build_mail(added, changed, removed, stand, rules)
-    print(f"Änderungs-Mail: {n} Änderung(en) erkannt -> {subject}")
+    subject, body, n = build_message(added, changed, removed, stand, rules)
+    print(f"Änderungs-Benachrichtigung: {n} Änderung(en) erkannt -> {subject}")
     delivered = False
     issue_file = os.environ.get("ISSUE_FILE")            # GitHub-Hinweis: Workflow legt daraus ein Issue an
     if issue_file:
@@ -408,10 +380,6 @@ def notify_changes(rows, stand, rules, state_file):
         Path(issue_file).with_suffix(".title").write_text(subject, encoding="utf-8")
         print(f"  GitHub-Hinweis vorbereitet ({issue_file}).")
         delivered = True
-    if os.environ.get("SMTP_HOST"):
-        if send_mail(subject, body):
-            print("  Mail gesendet.")
-            delivered = True
     if os.environ.get("NTFY_TOPIC"):
         if send_ntfy(subject, body):
             print("  Push-Nachricht gesendet.")
@@ -419,7 +387,7 @@ def notify_changes(rows, stand, rules, state_file):
     if delivered:
         save_state(rows, stand, state_file)               # nur nach erfolgreicher Zustellung merken
     else:
-        print("::warning::Änderungen erkannt, aber kein Kanal (Mail/Push/GitHub-Hinweis) aktiv - beim nächsten Lauf erneut versucht.")
+        print("::warning::Änderungen erkannt, aber kein Kanal (Push/GitHub-Hinweis) aktiv - beim nächsten Lauf erneut versucht.")
 
 
 def load_own_notices(path, day, lookahead):
@@ -476,8 +444,8 @@ def main():
     ap.add_argument("--html", help="lokale HTML-Datei statt Live-Seite (Test)")
     ap.add_argument("--no-osm", action="store_true", help="keine Overpass-Abfragen (nur Cache/manual)")
     ap.add_argument("--lookahead", type=int, default=7, help="Tage, für die 'bald' angezeigt wird")
-    ap.add_argument("--notify", action="store_true", help="bei Änderungen der LBV-Tabelle eine Mail senden")
-    ap.add_argument("--test-mail", action="store_true", help="nur eine Testmail senden (Mailkonfiguration prüfen)")
+    ap.add_argument("--notify", action="store_true", help="bei Änderungen der LBV-Tabelle eine Push-Nachricht/GitHub-Hinweis senden")
+    ap.add_argument("--test-push", action="store_true", help="nur eine Test-Push-Nachricht senden (ntfy-Konfiguration prüfen)")
     ap.add_argument("--state-file", default=str(STATE))
     ap.add_argument("--out", default=str(HERE / "docs" / "index.html"))
     a = ap.parse_args()
@@ -515,26 +483,15 @@ def main():
 
     if a.notify:
         notify_changes(rows, stand, rules, Path(a.state_file))
-    if a.test_mail:
+    if a.test_push:
         subj = "Spreewald-Sperrkarte: Testnachricht"
-        body = "Das ist eine Testnachricht der Spreewald-Sperrkarte. Wenn du sie liest, funktioniert dieser Kanal."
-        tried, ok = False, True
-        if os.environ.get("SMTP_HOST"):
-            tried = True
-            if send_mail(subj, body):
-                print("Testmail gesendet.")
-            else:
-                ok = False
-        if os.environ.get("NTFY_TOPIC"):
-            tried = True
-            if send_ntfy(subj, body):
-                print("Test-Push gesendet.")
-            else:
-                ok = False
-        if not tried:
-            sys.exit("FEHLER: weder Mail (SMTP_HOST) noch Push (NTFY_TOPIC) konfiguriert.")
-        if not ok:
-            sys.exit("FEHLER: Testnachricht konnte nicht an alle konfigurierten Kanäle gesendet werden (Details siehe oben).")
+        body = "Das ist eine Testnachricht der Spreewald-Sperrkarte. Wenn du sie liest, funktioniert der Push-Versand."
+        if not os.environ.get("NTFY_TOPIC"):
+            sys.exit("FEHLER: NTFY_TOPIC ist nicht konfiguriert.")
+        if send_ntfy(subj, body):
+            print("Test-Push gesendet.")
+        else:
+            sys.exit("FEHLER: Test-Push konnte nicht gesendet werden (Details siehe oben).")
 
 
 if __name__ == "__main__":
