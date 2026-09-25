@@ -1,5 +1,5 @@
 {
- "stand": "24.09.2026",
+ "stand": "25.09.2026",
  "rows": [
   {
    "gewaesser": "Spree (Sperrung)",
@@ -28,13 +28,6 @@
    "zeitraum": "14.09.2026 bis 30.11.2026",
    "grund": "Sedimentberäumung",
    "hinweis": "Vollsperrung! Östliche Umfahrung über Bancerowa, Erster Freiheitskanal und Südumfluter Westliche Umfahrung über Bancerowa, Spree, Uska Luke und Südumfluter"
-  },
-  {
-   "gewaesser": "Zeitzfließ (Sperrung)",
-   "bereich": "Oberspreewald, im Bereich der Zeitzschleuse am Wehr 107",
-   "zeitraum": "14.09.2026 bis 25.09.2026",
-   "grund": "Reparaturarbeiten an der Schleuse",
-   "hinweis": "Vollsperrung! Paddelboote können an der Schleuse umgetragen werden. Umfahrung über Zeitzfließ, Lehder Graben, Wehrkanal und Bürgerfließ"
   },
   {
    "gewaesser": "Obere Ragower Kahnfahrt (Sperrung)",
