@@ -1,5 +1,5 @@
 {
- "stand": "25.09.2026",
+ "stand": "05.10.2026",
  "rows": [
   {
    "gewaesser": "Spree (Sperrung)",
@@ -24,10 +24,10 @@
   },
   {
    "gewaesser": "Dritter Freiheitskanal (Sperrung)",
-   "bereich": "Oberspreewald, zwischen Bacerowa und Südumfluter",
+   "bereich": "Oberspreewald, zwischen Bancerowa und Südumfluter",
    "zeitraum": "14.09.2026 bis 30.11.2026",
    "grund": "Sedimentberäumung",
-   "hinweis": "Vollsperrung! Östliche Umfahrung über Bancerowa, Erster Freiheitskanal und Südumfluter Westliche Umfahrung über Bancerowa, Spree, Uska Luke und Südumfluter"
+   "hinweis": "Vollsperrung! Östliche Umfahrung über Spree, Alter Semisch und Südumfluter Westliche Umfahrung über Spree, Uska Luke und Südumfluter"
   },
   {
    "gewaesser": "Obere Ragower Kahnfahrt (Sperrung)",
@@ -37,13 +37,6 @@
    "hinweis": "Vollsperrung! Fahrzeuge des Hafenbetreibers und des Bootsverleih können nach Rücksprache mit dem Vorortverantwortlichen passieren."
   },
   {
-   "gewaesser": "Nordfließ (Einschränkung)",
-   "bereich": "Oberspreewald, Neu Zauche, im Bereich der Schleuse Kannomühle am Wehr 52",
-   "zeitraum": "24.08.2026 bis 30.09.2026",
-   "grund": "Reparaturarbeiten an den Ober- und Unterwasserstegen",
-   "hinweis": "Die Schleuse ist passierbar, es werden Behelfsstege errichtet. Bitte die Hinweise der Vorortverantwortlichen beachten."
-  },
-  {
    "gewaesser": "Spree (Sperrung)",
    "bereich": "Oberspreewald, Ortslage Burg, im Bereich der Brücke 08/78 Conradsbrücke, Schwarze Ecke 1",
    "zeitraum": "21.09. 2026 bis 09.10.2026",
@@ -51,18 +44,11 @@
    "hinweis": "Vollsperrung!"
   },
   {
-   "gewaesser": "Lehder Graben (Sperrung",
+   "gewaesser": "Lehder Graben (Sperrung)",
    "bereich": "Oberspreewald, Ortslage Lübbenau zwischen Ausfahrt Ruhehafen und Spree im Bereich der Stufenbrücke",
    "zeitraum": "17.08.2026 bis 04.12.2026",
    "grund": "Ersatzneubau der Stufenbrücke am Grossen Spreewaldhafen",
    "hinweis": "Vollsperrung! Umfahrung über Lehder Graben, Südumfluter und Spree"
-  },
-  {
-   "gewaesser": "Erster Freiheitskanal (Sperrung)",
-   "bereich": "Oberspreewald, Raum Leipe, zwischen E-Kanal und Semisch und Semisch und Verbindungsgraben",
-   "zeitraum": "05.08.2026 bis 30.09.2026",
-   "grund": "Entschlammungsarbeiten",
-   "hinweis": "Vollsperrung der genannten Abschnitte! Bitte die Ausschilderungen Vorort beachten da die einzelnen Abschnitte nacheinander abgearbeitet und gesperrt werden."
   },
   {
    "gewaesser": "Oberspreewald (Einschränkungen / Behinderungen / Sperrungen)",
