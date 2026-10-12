@@ -1,6 +1,13 @@
 {
- "stand": "05.10.2026",
+ "stand": "12.10.2026",
  "rows": [
+  {
+   "gewaesser": "Schiffbare Landesgewässer im Oberspreewald (Einschränkungen / Sperrungen)",
+   "bereich": "Oberspreewald zwischen Anfang der Schiffbarkeit in Burg(Spreewald) und Ragower Kahnfahrt",
+   "zeitraum": "12.10.2026 bis 26.02.2027",
+   "grund": "Baumfällarbeiten zur Aufrechterhaltung der Verkehrssicherheit",
+   "hinweis": "Auf Grund der Baumfällarbeiten kann es zur kurzfristigen, temporären und zeitlich befristeten Sperrungen schiffbarer Landesgewässer kommen. Bitte beachten Sie die Hinweise die Ihnen durch Schifffahrtszeichen gegeben werden. Das passieren gesperrter Bereiche ist nur nach erfolgter Freigabe durch die Vorort Verantwortlichen unter größter Vorsicht möglich. Den Anweisungen der Vorort Verantwortlichen ist unbedingt Folge zu leisten."
+  },
   {
    "gewaesser": "Spree (Sperrung)",
    "bereich": "Unterspreewald, im Bereich der Schleuse Hartmannsdorf",
