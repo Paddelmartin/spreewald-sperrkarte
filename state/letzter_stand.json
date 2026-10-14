@@ -1,5 +1,5 @@
 {
- "stand": "12.10.2026",
+ "stand": "14.10.2026",
  "rows": [
   {
    "gewaesser": "Schiffbare Landesgewässer im Oberspreewald (Einschränkungen / Sperrungen)",
@@ -65,16 +65,9 @@
    "hinweis": "Auf Grund der Krautungsarbeiten kann es zu kurzfristigen, temporären und zeitlich befristeten Sperrungen schiffbarer Landesgewässer kommen. Beachten Sie bitte die Hinweise die Ihnen durch die Schifffahrtszeichen gegeben werden. Das passieren eventuell gesperrter Bereiche ist nur nach erfolgter Freigabe durch die Vorort Verantwortlichen unter größter Vorsicht möglich. Den Anweisungen der Vorort Verantwortlichen ist unbedingt Folge zu leisten!"
   },
   {
-   "gewaesser": "Stilles Fließ (Sperrung)",
-   "bereich": "Oberspreewald, Ortslage Burg, im Bereich des des Kanu-Fischpass am Wehr 31",
-   "zeitraum": "20.05.2026 bis auf Widerruf",
-   "grund": "nicht gegebene Verkehrssicherheit der Steganlage des Kanu-Fischpass",
-   "hinweis": "Sperrung des Kanu-Fischpass. Paddelboote können an der Schleuse umgetragen werden."
-  },
-  {
    "gewaesser": "Spree (Einschränkungen)",
    "bereich": "Oberspreewald, Ortslage Burg, zwischen Jedroschleuse am Wehr 27 und Kreisgrenze SPN/OSL",
-   "zeitraum": "11.05.2026 bis 02.10.2026",
+   "zeitraum": "11.05.2026 bis 20.11.2026",
    "grund": "Ufersicherungarbeiten",
    "hinweis": "Es kann zu Einschränkungen der Schifffahrt kommen, Das Passieren des halbseitig gesperrten Bereiches ist nur nach Freigabe durch den Vorort Verantwortlichen und unter größter Vorsicht möglich. Den Anweisungen der Vorort Verantwortlichen ist unbedingt Folge zu leisten!"
   },
@@ -88,7 +81,7 @@
   {
    "gewaesser": "Mittelkanal / Weidenfließ (Sperrung)",
    "bereich": "Oberspreewald, zwischen Weidengraben und Burg-Lübbener-Kanal",
-   "zeitraum": "05.01.2026 bis 30.10.2026",
+   "zeitraum": "05.01.2026 bis 31.05.2027",
    "grund": "Ersatzneubau Wehr 38 (Werboa)",
    "hinweis": "Vollsperrung! Südliche Umfahrung über Weidengraben und Burg-Lübbener-Kanal Nördliche Umfahrung über Weidengraben, Großes Fließ, Leiper Graben und Burg-Lübbener-Kanal"
   },
