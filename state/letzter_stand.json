@@ -1,6 +1,13 @@
 {
- "stand": "14.10.2026",
+ "stand": "19.10.2026",
  "rows": [
+  {
+   "gewaesser": "Obere Boblitzer Kahnfahrt (Einschränkungen)",
+   "bereich": "Oberspreewald, zwischen Südumfluter und Bahntrasse Cottbus-Lübbenau",
+   "zeitraum": "19.10.2026 bis 30.11.2026",
+   "grund": "Ufersicherungsarbeiten",
+   "hinweis": "Es kann zu Einschränkungen der Schifffahrt kommen. Ein passieren des halbseitig gesperrten Bereichs ist nur nach Freigabe durch den Vorort Verantwortlichen und unter größter Vorsicht möglich. Den Anweisungen der Vorort Verantwortlichen ist unbedingt Folge zu leisten!"
+  },
   {
    "gewaesser": "Schiffbare Landesgewässer im Oberspreewald (Einschränkungen / Sperrungen)",
    "bereich": "Oberspreewald zwischen Anfang der Schiffbarkeit in Burg(Spreewald) und Ragower Kahnfahrt",
@@ -42,13 +49,6 @@
    "zeitraum": "14.09.2026 bis 30.11.2026, Montag bis Freitag",
    "grund": "Sedimentberäumung",
    "hinweis": "Vollsperrung! Fahrzeuge des Hafenbetreibers und des Bootsverleih können nach Rücksprache mit dem Vorortverantwortlichen passieren."
-  },
-  {
-   "gewaesser": "Spree (Sperrung)",
-   "bereich": "Oberspreewald, Ortslage Burg, im Bereich der Brücke 08/78 Conradsbrücke, Schwarze Ecke 1",
-   "zeitraum": "21.09. 2026 bis 09.10.2026",
-   "grund": "Ersatzneubau des Brückenbauwerkes",
-   "hinweis": "Vollsperrung!"
   },
   {
    "gewaesser": "Lehder Graben (Sperrung)",
