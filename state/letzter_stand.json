@@ -1,6 +1,13 @@
 {
- "stand": "19.10.2026",
+ "stand": "23.10.2026",
  "rows": [
+  {
+   "gewaesser": "Spree (Sperrung)",
+   "bereich": "Oberspreewald, im Bereich der Wander- und Radwegbrücke oberhalb der Dubkow Mühle",
+   "zeitraum": "26.10.2026 bis 04.12.2026",
+   "grund": "Erneurung der Oberbauten der Brücke",
+   "hinweis": "Es kann zu Einschränkung bzw. Sperrungen der Schifffahrt kommen. Bitte beachten Sie die Hinweise die Ihnen durch die Schifffahrtszeichen gegeben werden. Den Anweisungen der Vorort Verantworlichen ist unbedingt Folge zu leisten."
+  },
   {
    "gewaesser": "Obere Boblitzer Kahnfahrt (Einschränkungen)",
    "bereich": "Oberspreewald, zwischen Südumfluter und Bahntrasse Cottbus-Lübbenau",
