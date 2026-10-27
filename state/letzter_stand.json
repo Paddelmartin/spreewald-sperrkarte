@@ -1,6 +1,13 @@
 {
- "stand": "23.10.2026",
+ "stand": "27.10.2026",
  "rows": [
+  {
+   "gewaesser": "Zerniasfließ, Puhlstrom und Wasserburger Spree (Einschränkungen)",
+   "bereich": "Unterspreewald, im Bereich der Brücken der L421 Schlepzig - Krausnick",
+   "zeitraum": "04.11.2026 bis 05.11.2026",
+   "grund": "Bauwerksuntersuchungen an den Brücken mittels schwimmender Rüstung",
+   "hinweis": "Es kann zu Einschränkungen kommen. Bitte beachten Sie die Anweisungen der Vorort Verantwortlichen."
+  },
   {
    "gewaesser": "Spree (Sperrung)",
    "bereich": "Oberspreewald, im Bereich der Wander- und Radwegbrücke oberhalb der Dubkow Mühle",
